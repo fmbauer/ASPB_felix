@@ -27,6 +27,7 @@
         <!--Z-Coordinate of seed position [cm]-->
 		<parameter name="simulationTime" value="28"/>
         <!--Recommended final simulation time  [day]-->
+		<parameter name="delayDefinition" value="1"/>
 </organ>
 <organ type="root" name="primary" subType="1">
         <parameter name="gf" value="1"/>
@@ -222,7 +223,7 @@
 		<parameter name="lmax" value="100" dev="0"/>
 		<parameter name="r" value="1.128705967" dev="0.659494395" />
 		<!--growth delay of laterals (incremental => init age = -delayLat * numLat-->
-		<parameter name="delayLat" value="3" dev="0" />
+		<parameter name="ldelay" value="2" dev="0"/>
 		<!--Inter-lateral distance [cm];-->
 		<parameter name="nodalGrowth" value="0" />
 		<parameter name="a" value="0.130868444" dev="0.0" />

@@ -7,7 +7,7 @@ import visualisation.vis_tools as cpbvis
 
 import numpy as np
 
-filename = "../../modelparameter/structural/plant/vis_example_plant_maize.xml"
+filename = "../../experimental/photosynthesis/P3_plant.xml"
 output = "./results/vis_plant"
 
 time = 28
