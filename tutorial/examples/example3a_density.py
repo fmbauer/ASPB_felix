@@ -6,20 +6,20 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-path = "../../modelparameter/structural/rootsystem/"
-name = "Brassica_napus_a_Leitner_2010"  # "Crypsis_aculeata_Clausnitzer_1994"
+path = "../../modelparameter/structural/plant/"
+name = "P3_plant"  # "Crypsis_aculeata_Clausnitzer_1994"
 
 rs = pb.RootSystem()
 rs.readParameters(path + name + ".xml")
 
-depth = 220
-layers = 50
-runs = 10
+depth = 100
+layers = 20
+runs = 1
 
 rl_ = []
 for i in range(0, runs):
     rs.initialize(False)
-    rs.simulate(120, False)
+    rs.simulate(60, False)
     ana = pb.SegmentAnalyser(rs)
     rl_.append(ana.distribution("length", 0., -depth, layers, True))
 
@@ -33,8 +33,9 @@ plt.plot(rl_mean, z_, "b")
 plt.plot(rl_mean + rl_err, z_, "b:")
 plt.plot(rl_mean - rl_err, z_, "b:")
 
-plt.xlabel("root surface (cm^2 / cm^3)")
-plt.ylabel("z-coordinate (cm)")
-plt.legend(["mean value (" + str(runs) + " runs)", "error"])
+plt.xlabel("root length density (cm$^3$ cm$^{-3}$)")
+plt.ylabel("Depth (cm)")
+# plt.legend(["mean value (" + str(runs) + " runs)", "error"])
 plt.savefig("results/example_3a.png")
 plt.show()
+rs.write("results/rsml_brassica.rsml")

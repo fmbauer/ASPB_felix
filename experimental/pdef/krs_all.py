@@ -65,8 +65,8 @@ kz0 = kz_s
 '''Artificial Shoot kx'''
 
 # artificial shoot
-kr0 = np.array([[0, 1.e-12], [1e4, 1.e-12]])
-kz0 = np.array([[0, 1.], [1e4, 1.]])	
+# kr0 = np.array([[0, 1.e-12], [1e4, 1.e-12]])
+# kz0 = np.array([[0, 1.], [1e4, 1.]])	
 
 # kz0 = np.array([[0., 0.33355685296285653], [1.e-20, 0.33355685296285653]])		#
 # kz0 = np.array([[0, 0.356832], [1e20, 0.356832]])		# kx of tap root at age 1e20
@@ -132,7 +132,7 @@ kz5 = np.array([[0.185185185,0.006101211],[0.277777778,0.006128716],[0.37037037,
 dist = 40  # distance between the root systems [cm]
 dt = 1.
 steps = round(MaxSimtime / dt)  # steps
-runs = 10
+runs = 100
 krs_P0,krs_P1,krs_P2,krs_P3, count  = [], [],[], [],[]
 krshoot_P0,krshoot_P1,krshoot_P2,krshoot_P3 = [], [],[], []
 krplant_P0,krplant_P1,krplant_P2,krplant_P3 = [], [],[], []
@@ -288,8 +288,8 @@ for i in range(0,runs):
 
             #print("Krs: ", krs)
             #print("time: ", j)
-            krs_.append(krs/1000000/10000*3600/24*hPa2cm)
-            # krs_.append(krs)
+            # krs_.append(krs/1000000/10000*3600/24*hPa2cm)
+            krs_.append(krs)
             krshoot_.append(krshoot)
             krplant_.append(krplant)
             jc_.append(jc)
@@ -365,6 +365,8 @@ def getFigdata(pdFinal, name, legend, ti):
     plt.ylabel(legend)
     plt.xlabel('time (d)')
     plt.xlim(0,29)
+    plt.ylim(0,0.018)
+
     plt.legend()
     plt.show()
     fig.savefig(name+'.png', dpi=fig.dpi)

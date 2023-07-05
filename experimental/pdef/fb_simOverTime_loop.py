@@ -24,7 +24,7 @@ import numpy as np
 
 
 def weather(simDuration, hp, condition):
-    vgSoil = [0.01, 0.4193, 0.0051, 1.6727, 21.82]
+    vgSoil = [0.059, 0.45, 0.00644, 1.503, 1]
     loam = [0.08, 0.43, 0.04, 1.6, 50]
     Qnigh = 0;
     Qday = 960e-6  # 458*2.1
@@ -46,12 +46,12 @@ def weather(simDuration, hp, condition):
         RHday = 0.3;
         RHnigh = 0.78
         Pair = 1070.00  # hPa
-        thetaInit = 20 / 100  # 10.47/100#
+        thetaInit = 12 / 100  # 10.47/100#
         cs = 350e-6
     else:
         print("condition", condition)
         raise Exception("condition not recognised")
-    coefhours =  1#sinusoidal(simDuration)
+    coefhours =  max(0.,sinusoidal(simDuration) - 0.3) # total night 30% of the time
     RH_ = RHnigh + (RHday - RHnigh) * coefhours
     TairC_ = Tnigh + (Tday - Tnigh) * coefhours
     Q_ = Qnigh + (Qday - Qnigh) * coefhours
@@ -98,11 +98,10 @@ def resistance2conductance(resistance, r, weatherX):
                 1 / 10000)  # [s cm2 mmol−1] * [mmol/mol] * [m2/cm2] = [s m2 mol−1]
     return 1 / resistance
 
-name = ''
-def initPlant(simDuration, condition):
-    global name
-    weatherInit = weather(0, 0, condition)
-    # simDuration = 28 # [day] init simtime
+
+def initPlant(simInit, condition):
+    weatherInit = weather(simInit, 0, condition)
+    simDuration = simInit # [day] init simtime
     # spellDuration = 5
     simMax = 28  # simStartSim+ spellDuration
     depth = 80
@@ -110,10 +109,10 @@ def initPlant(simDuration, condition):
     verbose = True
 
     # plant system
-    pl = pb.MappedPlant(seednum=2)  # pb.MappedRootSystem() #pb.MappedPlant()
+    pl = pb.MappedPlant()  # pb.MappedRootSystem() #pb.MappedPlant()
     # pl2 = pb.MappedPlant(seednum = 2) #pb.MappedRootSystem() #pb.MappedPlant()
     path = CPBdir + "/modelparameter/structural/plant/"
-    name = "P0_plant"  # "Triticum_aestivum_adapted_2021"#
+    name = "P2_plant"  # "Triticum_aestivum_adapted_2021"#
     pl.readParameters( name + ".xml")
 
     if name == 'P0_plant':
@@ -130,7 +129,8 @@ def initPlant(simDuration, condition):
             p.createLeafRadialGeometry(phi,l,NLeaf)
         for p in pl.getOrganRandomParameter(pb.stem):
             p.r = 0.758517633
-            p.lmax = (simMax-7)*0.758517633 
+            # p.lmax = (simMax-7)*0.758517633 
+            # p.lmax=200
     if name == 'P1_plant':
         for p in pl.getOrganRandomParameter(pb.leaf):
             p.lb =  0 # length of leaf stem
@@ -147,43 +147,43 @@ def initPlant(simDuration, condition):
         for p in pl.getOrganRandomParameter(pb.stem):
             r= 0.91546738
             p.r = r
-            p.lmax = (simMax-7)*0.91546738  
-    if name == 'P2_plant':
-        for p in pl.getOrganRandomParameter(pb.leaf):
-            p.lb =  0 # length of leaf stem
-            p.la,  p.lmax = 52.23664394, 52.23664394
-            p.areaMax = 80.68274258  # cm2, area reached when length = lmax
-            NLeaf = 100  # N is rather high for testing
-            phi = np.array([-90,-80, -45, 0., 45, 90]) / 180. * np.pi
-            l = np.array([52.23664394,1 ,1, 0.3, 1, 52.23664394]) #distance from leaf center
-            p.tropismT = 1 # 6: Anti-gravitropism to gravitropism
-            #p.tropismN = 5
-            p.tropismS = 0.05
-            p.tropismAge = 5 #< age at which tropism switch occures, only used if p.tropismT = 6
-            p.createLeafRadialGeometry(phi, l, NLeaf)
-        for p in pl.getOrganRandomParameter(pb.stem):
-            r= 1.000613891
-            p.r = r
-            p.lmax = (simMax-7)*1.000613891    
+            # p.lmax = (simMax-7)*0.91546738  
+    # if name == 'P2_plant':
+    #     for p in pl.getOrganRandomParameter(pb.leaf):
+    #         p.lb =  0 # length of leaf stem
+    #         p.la,  p.lmax = 52.23664394, 52.23664394
+    #         p.areaMax = 80.68274258  # cm2, area reached when length = lmax
+    #         NLeaf = 100  # N is rather high for testing
+    #         phi = np.array([-90,-80, -45, 0., 45, 90]) / 180. * np.pi
+    #         l = np.array([52.23664394,1 ,1, 0.3, 1, 52.23664394]) #distance from leaf center
+    #         p.tropismT = 1 # 6: Anti-gravitropism to gravitropism
+    #         #p.tropismN = 5
+    #         p.tropismS = 0.05
+    #         p.tropismAge = 5 #< age at which tropism switch occures, only used if p.tropismT = 6
+    #         p.createLeafRadialGeometry(phi, l, NLeaf)
+    #     for p in pl.getOrganRandomParameter(pb.stem):
+    #         r= 1.000613891
+    #         p.r = r
+    #         # p.lmax = (simMax-7)*1.000613891    
 
-    if name == 'P3_plant':
-        for p in pl.getOrganRandomParameter(pb.leaf):
-            p.lb =  0 # length of leaf stem
-            p.la,  p.lmax = 49.12433414, 49.12433414
-            p.areaMax = 71.95670914  # cm2, area reached when length = lmax
-            NLeaf = 100  # N is rather high for testing
-            phi = np.array([-90,-80, -45, 0., 45, 90]) / 180. * np.pi
-            l = np.array([49.12433414,1 ,1, 0.3, 1, 49.12433414]) #distance from leaf center
-            p.tropismT = 1 # 6: Anti-gravitropism to gravitropism
-            p.tropismN = 5
-            p.tropismS = 0.05
-            p.tropismAge = 5 #< age at which tropism switch occures, only used if p.tropismT = 6
-            p.createLeafRadialGeometry(phi, l, NLeaf)
+    # if name == 'P3_plant':
+    #     for p in pl.getOrganRandomParameter(pb.leaf):
+    #         p.lb =  0 # length of leaf stem
+    #         p.la,  p.lmax = 49.12433414, 49.12433414
+    #         p.areaMax = 71.95670914  # cm2, area reached when length = lmax
+    #         NLeaf = 100  # N is rather high for testing
+    #         phi = np.array([-90,-80, -45, 0., 45, 90]) / 180. * np.pi
+    #         l = np.array([49.12433414,1 ,1, 0.3, 1, 49.12433414]) #distance from leaf center
+    #         p.tropismT = 1 # 6: Anti-gravitropism to gravitropism
+    #         p.tropismN = 5
+    #         p.tropismS = 0.05
+    #         p.tropismAge = 5 #< age at which tropism switch occures, only used if p.tropismT = 6
+    #         p.createLeafRadialGeometry(phi, l, NLeaf)
 
-        for p in pl.getOrganRandomParameter(pb.stem):
-            r= 1.128705967
-            p.r = r
-            p.lmax = (simMax-7)*1.128705967   
+    #     for p in pl.getOrganRandomParameter(pb.stem):
+    #         r= 1.128705967
+    #         p.r = r
+    #         # p.lmax = (simMax-7)*1.128705967   
 
 
     # raise Exception
@@ -193,15 +193,15 @@ def initPlant(simDuration, condition):
 
     pl.initialize(verbose=True)  # , stochastic = False)
     
-    # parameters = pl.getOrganRandomParameter(pb.stem)
-    # for p in parameters:
-    #     print(p)
-    # parameters = pl.getOrganRandomParameter(pb.root)
-    # for p in parameters:
-    #     print(p)
-    # parameters = pl.getOrganRandomParameter(pb.leaf)
-    # for p in parameters:
-    #     print(p)
+    parameters = pl.getOrganRandomParameter(pb.stem)
+    for p in parameters:
+        print(p)
+    parameters = pl.getOrganRandomParameter(pb.root)
+    for p in parameters:
+        print(p)
+    parameters = pl.getOrganRandomParameter(pb.leaf)
+    for p in parameters:
+        print(p)
     
     pl.simulate(simDuration, False)  # , "outputpm15.txt")
     print('SIMULATION')
@@ -221,10 +221,9 @@ def initPlant(simDuration, condition):
     final_area.append(np.sum(area))
     v = np.array(pl.getParameter('length'))
     final_length.append(np.sum(v))
-    print('Area: ',final_area, 'length:', final_length)  
-    
-    # vp.plot_plant(pl,'type')
-    # raise Exception
+    print('Area: ',final_area, 'length:', final_length)
+
+
     """ Coupling to soil """
 
     min_b = [-3. / 2, -12. / 2, -41.]  # distance between wheat plants
@@ -308,7 +307,7 @@ def initPlant(simDuration, condition):
 
     hp = max([tempnode[2] for tempnode in r.get_nodes()]) / 100
 
-    weatherX = weather(simDuration, hp, condition)
+    weatherX = weather(simDuration, hp, condition = "wet")
     r.Patm = weatherX["Pair"]
     ##resistances
     r.g_bl = resistance2conductance(weatherX["rbl"], r, weatherX) / r.a2_bl
@@ -333,136 +332,98 @@ def initPlant(simDuration, condition):
     return r, weatherX, sx
 
 
-Q = np.arange(1e-6, 1000e-6, 100e-6)  # mol quanta m-2 s-1 light, example from leuning1995
-TairC = np.arange(-10, 55, 5)
-cs = np.arange(0e-6, 500e-6, 50e-6)  # mol mol-1
-
-simDuration = 28
-rinit = initPlant(simDuration, condition="dry")
-r = rinit[0]
+#Q = np.arange(1e-6, 1000e-6, 100e-6)  # mol quanta m-2 s-1 light, example from leuning1995
+#TairC = np.arange(-10, 55, 5)
+#cs = np.arange(0e-6, 500e-6, 50e-6)  # mol mol-1
+simInit = 1
+simDuration = simInit
+maxSim = 28
+dt = 1/24 #in days
+rinit = initPlant(simDuration, condition="wet")
 weatherX = rinit[1]
-rinit = initPlant(simDuration, condition="dry")
-
-
 rC4 = rinit[0]
-print("r.PhotoType, pb.C3, pb.C4",r.PhotoType,rC4.PhotoType)
+
 rC4.PhotoType=pb.C4
 
 
 sx = rinit[2]  # np.linspace(-100, -20000, 100)
 p_errors = []
-dt = 1/24
+
 kr_l = 3.83e-5
-r = setKrKx_xylem(weatherX["TairC"], weatherX["RH"], r, kr_l)
 rC4 = setKrKx_xylem(weatherX["TairC"], weatherX["RH"], rC4, kr_l)
 
-#weatherX = weather(simDuration, hp, "wet")
-r.Patm = weatherX["Pair"]
+
 rC4.Patm = weatherX["Pair"]
-directoryN = "/testPhoto2/"
-variables = [Q,TairC,  cs]
-#variables = [[],[],  cs]
-resultsAnC3 = [[], [], []]
-resultsAnC4 = [[], [], []]
-resultsFwC4 = [[], [], []]
+directoryN = "/fb_simOverTime/"
 
-print("to do",[len(a) for a in variables])
-for i in range(len(variables)):
-    An = []
-    AnC4 = []
-    FW = []
-    Q_input = 900e-6
-    cs_input = 350e-6
-    Tair_input = 25
-    var = [Q_input, Tair_input, cs_input]
-    for j in range(len(variables[i])):
-        print(i, j)
-        var[i] = variables[i][j]
-        
-        weatherX["Qlight"] = var[0]
-        weatherX["TairC"] = var[1]
-        weatherX["TairK"] = weatherX["TairC"] + 273.15
-        weatherX["cs"] = var[2]
-        r.cs = weatherX["cs"]
-        rC4.cs = weatherX["cs"]
-        hp = max([tempnode[2] for tempnode in r.get_nodes()]) / 100  # maxnode canopy [m]
-        # print([tempnode[2] for tempnode in r.get_nodes()], hp)
 
-        
-        ##resistances
-        r.g_bl = resistance2conductance(weatherX["rbl"], r, weatherX) / r.a2_bl
-        r.g_canopy = resistance2conductance(weatherX["rcanopy"], r, weatherX) / r.a2_canopy
-        r.g_air = resistance2conductance(weatherX["rair"], r, weatherX) / r.a2_air
-        rC4.g_bl = resistance2conductance(weatherX["rbl"], rC4, weatherX) / rC4.a2_bl
-        rC4.g_canopy = resistance2conductance(weatherX["rcanopy"], rC4, weatherX) / rC4.a2_canopy
-        rC4.g_air = resistance2conductance(weatherX["rair"], rC4, weatherX) / rC4.a2_air
+AnC4 = []
+psixyl =[]
+j = 0
+while simDuration < maxSim:
+    #update weather data
+    hp = max([tempnode[2] for tempnode in rC4.get_nodes()]) / 100  # maxnode canopy [m]
+    weatherX =  weather(simDuration, hp, condition = "dry")
+    rC4.cs = weatherX["cs"]
+    rC4.Qlight = weatherX["Qlight"]          
+    rC4 = setKrKx_xylem(weatherX["TairC"], weatherX["RH"], rC4, kr_l)
+    
 
-        r.Qlight = weatherX["Qlight"]  # ; TairC = weatherX["TairC"] ; text = "night"
-        rC4.Qlight = weatherX["Qlight"]  
-        # print(rC4.psiXyl)
-        ana = pb.SegmentAnalyser(rC4.plant.mappedSegments())
-        cutoff = 1e-15 #is get value too small, makes paraview crash
-        psiXyl_p = np.array(rC4.psiXyl)
-        psiXyl_p[abs(psiXyl_p) < cutoff] = 0
-        ana.addData("psi_Xyl",psiXyl_p)
-        ana.write(str(name)+"_results"+directoryN+"photo_2_"+str(j)+".vtp", ["psi_Xyl"]) 
-        
-        
-        #
-        # kr_l  = 3.83e-7
-        # r.setKr_meso([kr_l])
-        print("r.PhotoType, pb.C3, pb.C4",r.PhotoType,rC4.PhotoType)
-        # r.solve_photosynthesis(sim_time_=simDuration, sxx_=sx, cells_=True,
-        #                        ea_=weatherX["ea"], es_=weatherX["es"],
-        #                        verbose_=False, doLog_=False, TairC_=weatherX["TairC"],
-        #                        outputDir_="./results" + directoryN)
-        
-        rC4.solve_photosynthesis(sim_time_=simDuration, sxx_=sx, cells_=True,
-                               ea_=weatherX["ea"], es_=weatherX["es"],
-                               verbose_=False, doLog_=False, TairC_=weatherX["TairC"],
-                               outputDir_="./results" + directoryN)
+    
+    ##resistances
+    rC4.g_bl = resistance2conductance(weatherX["rbl"], rC4, weatherX) / rC4.a2_bl
+    rC4.g_canopy = resistance2conductance(weatherX["rcanopy"], rC4, weatherX) / rC4.a2_canopy
+    rC4.g_air = resistance2conductance(weatherX["rair"], rC4, weatherX) / rC4.a2_air
 
-        idsC4 = np.where(np.array(rC4.ci)> 0)
-        idsC3 = np.where(np.array(r.ci)> 0)
-        print('Fw:',np.mean(rC4.fw), 'gco2:', np.mean(rC4.gco2), 'Ci/Cs:', np.mean(np.array(rC4.ci)[idsC4]/rC4.cs))
+    
+    
+    #
+    # kr_l  = 3.83e-7
+    # r.setKr_meso([kr_l])
+    print("r.PhotoType, pb.C3, pb.C4",rC4.PhotoType,rC4.PhotoType)
+    print("has",sum(rC4.plant.leafBladeSurface),"cm2 of leaf blade")
 
-        # assert (idsC4[0] == idsC3[0]).all()
-        print('Qlight:{}, T:{}, cs:{},An:{}, Vj:{}, Vp:{},Vc:{}, Rd:{}, Rd_ref:{}'.format(var[0]*1e6, var[1], var[2]*1e6,
-                np.mean(np.array(rC4.An)[idsC4])*1e6,np.mean(np.array(rC4.Vj)[idsC4])*1e6,
-                np.mean(np.array(rC4.Vp)[idsC4])*1e6,np.mean(np.array(rC4.Vc)[idsC4])*1e6,
-                np.mean(np.array(rC4.Rd)[idsC4])*1e6,np.mean(np.array(rC4.Rd_ref)[idsC4])*1e6)) 
-        # print('An:{}, Vj:{}, Vp:{},Vc:{}, Rd:{}, Rd_ref:{}'.format(
-        #         np.mean(np.array(r.An)[idsC3])*1e6,np.mean(np.array(r.Vj)[idsC3])*1e6,
-        #         np.mean(np.array(r.Vp)[idsC3])*1e6,np.mean(np.array(r.Vc)[idsC3])*1e6,
-        #         np.mean(np.array(r.Rd)[idsC3])*1e6,np.mean(np.array(r.Rd_ref)[idsC3])*1e6))
-        #print(max(rC4.deltagco2),max(rC4.ci),max(rC4.gco2)) 
-        #print(var,np.mean(rC4.Vc),np.mean(rC4.Vj),np.mean(rC4.Vp),np.mean(rC4.Rd),np.mean(rC4.Rd_ref))                       
-        An.append(np.sum(np.array(r.An)[idsC4]) * 1e6)
-        AnC4.append(np.sum(np.array(rC4.An)[idsC4]) * 1e6)
-        FW.append(np.mean(rC4.fw))
-    resultsAnC3[i] = An
-    resultsAnC4[i] = AnC4
-    resultsFwC4[i] = FW
+    rC4.solve_photosynthesis(sim_time_=simDuration, sxx_=sx, cells_=True,
+                           ea_=weatherX["ea"], es_=weatherX["es"],
+                           verbose_=False, doLog_=False, TairC_=weatherX["TairC"],
+                           outputDir_="./results" + directoryN)
+                           
+    # print(np.mean(rC4.psiXyl))
+    # psixyl.append(rC4.psiXyl)
+    # ana = pb.SegmentAnalyser(rC4.plant.mappedSegments())
+    # cutoff = 1e-15 #is get value too small, makes paraview crash
+    # psiXyl_p = np.array(rC4.psiXyl)
+    # psiXyl_p[abs(psiXyl_p) < cutoff] = 0
+    # ana.addData("psi_Xyl",psiXyl_p)
+    # ana.write("results"+directoryN+"photo_2_"+str(j)+".vtp") 
 
-resultsAnC3 = pd.DataFrame(resultsAnC3)
-resultsAnC4 = pd.DataFrame(resultsAnC4)
-resultsFwC4 = pd.DataFrame(resultsFwC4)
 
-variables = pd.DataFrame(variables)
 
-resultsAnC3.to_csv(str(name)+"_resultsAnC3.csv", index=False)
-resultsAnC4.to_csv(str(name)+"_resultsAnC4.csv", index=False)
-resultsFwC4.to_csv(str(name)+"_resultsFwC4.csv", index=False)
+    idsC4 = np.where(np.array(rC4.ci)> 0)
+    
+    print('An:{}, Vj:{}, Vp:{},Vc:{}, Rd:{}, Rd_ref:{}'.format(
+            np.mean(np.array(rC4.An)[idsC4])*1e6,np.mean(np.array(rC4.Vj)[idsC4])*1e6,
+            np.mean(np.array(rC4.Vp)[idsC4])*1e6,np.mean(np.array(rC4.Vc)[idsC4])*1e6,
+            np.mean(np.array(rC4.Rd)[idsC4])*1e6,np.mean(np.array(rC4.Rd_ref)[idsC4])*1e6)) 
+            
+    AnC4.append(np.sum(np.array(rC4.An)[idsC4]) * 1e6)
+    rC4.plant.simulate(dt,  False)
+    simDuration += dt
+    j += 1
+
+#resultsAnC3 = pd.DataFrame(resultsAnC3)
+AnC4 = pd.DataFrame(AnC4)
+
+AnC4.to_csv("resultsAnC4.csv", index=False)
 
  
 
 
 
 
-print(resultsAnC4)
-variables.to_csv("variables.csv", index=False)
+print(AnC4)
 
 isInSoil = np.array([rC4.plant.seg2cell[si] >= 0 for si in range(len(rC4.plant.segments))])
 ana = pb.SegmentAnalyser(rC4.plant.mappedSegments())
 ana.addData("isInSoil", isInSoil)
-ana.write(str(name)+"_testphoto.vtp", ["AnC4","organType", "subType", "isInSoil"]) 
+ana.write("fb_simOverTime.vtp", ["AnC4","organType", "subType", "isInSoil"]) 

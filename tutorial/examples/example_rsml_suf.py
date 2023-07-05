@@ -10,11 +10,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 """ Read RSML file and test whether it is OK """
-r = XylemFluxPython("../../../dumux-rosi/grids/RootSystem.rsml")
+r = XylemFluxPython("/mnt/c/Users/mobil/CPB/CPlantBox/tutorial/examples/results/rsml_brassica.rsml")
 r.test()  # here you could add the addition of artificial shoot and creation time (using the viewer as template)
-
+r.artificial_shoot()
 """Retrieve information from the RSML file"""
-polylines, props, functions, metadata = rsml.read_rsml("../../../dumux-rosi/grids/RootSystem.rsml")
+polylines, props, functions, metadata = rsml.read_rsml("/mnt/c/Users/mobil/CPB/CPlantBox/tutorial/examples/results/rsml_brassica.rsml")
 print(len(polylines), "roots")
 # print(props["parent-poly"])
 # print(props["parent-node"])
@@ -41,5 +41,5 @@ print("eswp: ", eswp)
 """ vtk plot """
 ana = pb.SegmentAnalyser(r.rs)
 ana.addData("suf", suf)
-# vp.plot_roots(ana, "suf", "Soil uptake fraction (cm3 day)")  # "fluxes"
+vp.plot_roots(ana, "suf", "Soil uptake fraction (cm3 day)")  # "fluxes"
 

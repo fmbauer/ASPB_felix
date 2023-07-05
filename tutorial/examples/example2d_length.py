@@ -6,8 +6,8 @@ import plantbox as pb
 import numpy as np
 import matplotlib.pyplot as plt
 
-path = "../../modelparameter/structural/rootsystem/"
-name = "Brassica_napus_a_Leitner_2010"
+path = "../../modelparameter/structural/plant/"
+name = "P3_plant"
 
 rs = pb.RootSystem()
 rs.readParameters(path + name + ".xml")
@@ -19,7 +19,7 @@ N = round(simtime / dt)  # steps
 
 # Plot some scalar value over time
 stype = "length"
-v_, v1_, v2_, v3_ = np.zeros(N), np.zeros(N), np.zeros(N), np.zeros(N)
+v_, v1_, v2_, v3_, v4_,v5_ = np.zeros(N), np.zeros(N), np.zeros(N), np.zeros(N), np.zeros(N), np.zeros(N)
 for i in range(0, N):
     rs.simulate(dt)
     t = np.array(rs.getParameter("type"))
@@ -28,11 +28,11 @@ for i in range(0, N):
     v1_[i] = np.sum(v[t == 1])
     v2_[i] = np.sum(v[t == 2])
     v3_[i] = np.sum(v[t == 3])
-
+    v4_[i] = np.sum(v[t == 4])
 t_ = np.linspace(dt, N * dt, N)
-plt.plot(t_, v_, t_, v1_, t_, v2_, t_, v3_)
+plt.plot(t_, v_, t_, v1_, t_, v2_, t_, v3_,t_, v4_,t_, v5_)
 plt.xlabel("time (days)")
 plt.ylabel(stype + " (cm)")
-plt.legend(["total", "tap root", "lateral", "2. order lateral"])
+plt.legend(["total", "tap root", "long lateral", "short lateral", 'seminal roots', 'crown roots'])
 plt.savefig("results/example_2d.png")
 plt.show()
