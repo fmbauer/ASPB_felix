@@ -431,6 +431,34 @@ plt.title('E')
 plt.legend()
 plt.show()
 plt.close()
+
+plt.plot(P0_mean_values['time'].values, P0_mean_values['gco2'].values, label = 'P0')
+
+plt.fill_between(P0_mean_values['time'].values, P0_mean_values['gco2'].values - P0_std_values['gco2'].values,
+                     P0_mean_values['gco2'].values + P0_std_values['gco2'].values, alpha=0.3)
+
+plt.plot(P1_mean_values['time'].values, P1_mean_values['gco2'].values,label = 'P1')
+
+plt.fill_between(P1_mean_values['time'].values, P1_mean_values['gco2'].values - P1_std_values['gco2'].values,
+                     P1_mean_values['gco2'].values + P1_std_values['gco2'].values, alpha=0.3)
+
+plt.plot(P2_mean_values['time'].values, P2_mean_values['gco2'].values,label = 'P2')
+
+plt.fill_between(P2_mean_values['time'].values, P2_mean_values['gco2'].values - P2_std_values['gco2'].values,
+                     P2_mean_values['gco2'].values + P2_std_values['gco2'].values, alpha=0.3)
+
+plt.plot(P3_mean_values['time'].values, P3_mean_values['gco2'].values,label = 'P3')
+
+plt.fill_between(P3_mean_values['time'].values, P3_mean_values['gco2'].values - P3_std_values['gco2'].values,
+                     P3_mean_values['gco2'].values + P3_std_values['gco2'].values, alpha=0.3)
+
+plt.xlabel('time')
+# plt.ylabel('Values')
+plt.title('gco2')
+plt.legend()
+plt.show()
+plt.close()
+
 print(P0_mean_values)
 print(P0_std_values)
 
