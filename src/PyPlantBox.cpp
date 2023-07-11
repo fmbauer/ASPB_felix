@@ -1015,6 +1015,7 @@ PYBIND11_MODULE(plantbox, m) {
             .def_readwrite("es", &Photosynthesis::es)
             .def_readwrite("ea", &Photosynthesis::ea)
             .def_readwrite("gm",&Photosynthesis::gm)
+            .def_readwrite("gardCell_psi",&Photosynthesis::pg)
             .def_readwrite("PVD",&Photosynthesis::PVD)
             .def_readwrite("EAL",&Photosynthesis::EAL)
             .def_readwrite("hrelL",&Photosynthesis::hrelL)			  
