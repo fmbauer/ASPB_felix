@@ -20,7 +20,7 @@ soilcore = pb.SDF_PlantContainer(5, 5, 40, False)
 rhizotron = pb.SDF_PlantBox(1.4, 27, 27)
 
 # Pick 1, or 2
-rs.setGeometry(soilcore)  # soilcore, or rhizotron
+rs.setGeometry(rhizotron)  # soilcore, or rhizotron
 
 # Initialize
 rs.initialize()

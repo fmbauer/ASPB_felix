@@ -5,19 +5,9 @@
         <!--Maximal number of tillers [1]-->
         <parameter name="delayB" value="1"/>
         <!--Time delay between the basal roots [day]-->
-        <parameter name="delayRC" value="7.42"/>
-        <!--Delay between the root crowns [day]-->
-        <parameter name="delaySB" value="1"/>
-        <!--Time delay between the shoot borne roots [day]-->
         <parameter name="firstB" value="3.6"/>
-        <!--Emergence of first basal root [day]-->
-        <parameter name="firstSB" value="8.6"/>
         <!--First emergence of a shoot borne root [day]-->
         <parameter name="maxB" value="4.4"/>
-        <!--Maximal number of basal roots [1]-->
-        <parameter name="nC" value="3"/>
-        <!--Maximal number of roots per root crown [1]-->
-        <parameter name="nz" value="0.1"/>
         <!--Distance between the root crowns along the shoot [cm]-->
         <parameter name="seedPos.x" value="0"/>
         <!--X-Coordinate of seed position [cm]-->
@@ -27,8 +17,6 @@
         <!--Z-Coordinate of seed position [cm]-->
 		<parameter name="simulationTime" value="28"/>
         <!--Recommended final simulation time  [day]-->
-		<parameter name="delayDefinition" value="1"/>
-
 </organ>
 <organ type="root" name="primary" subType="1">
         <parameter name="gf" value="1"/>
@@ -215,16 +203,16 @@
 </organ>
 <organ type="stem" name="mainstem" subType="1">
 		<!--Basal zone [cm]-->
-		<parameter name="lb" value="1" dev="0"/>
+		<parameter name="lb" value="0.2" dev="0"/>
 		<!--Basal zone [cm]-->
 		<parameter name="la" value="0" dev="0"/>
 		<!--Apical zone [cm];-->
 		<parameter name="ln" value="1.486971798" dev="0.31335024" functiontype="0"/>
 		<!--Inter-lateral distance [cm];-->
 		<parameter name="lmax" value="14" dev="0"/>
-		<parameter name="r" value="0.758517633" dev="0.875606321"/>
+		<parameter name="r" value="0.758517633" dev="0"/>
 		<!--growth delay of laterals (incremental => init age = -delayLat * numLat-->
-		<parameter name="ldelay" value="3" dev="0"/>
+		<parameter name="delayLat" value="0" dev="0" />
 		<!--Inter-lateral distance [cm];-->
 		<parameter name="nodalGrowth" value="0" />
 		<parameter name="a" value="0.18699332" dev="0.0" />
@@ -249,7 +237,7 @@
 		<parameter name="ln" value="0" dev="0" functiontype="3"/>
 		<!--Inter-lateral distance [cm];-->
 		<parameter name="lmax" value="38.41053981" dev="7.880276917"/>
-		<parameter name="r" value="7.921748215" dev="2.337502885"/>
+		<parameter name="r" value="7.921748215" dev="0"/>
 		<parameter name="tropismT" value="1"/>
 		<parameter name="tropismN" value="5"/>
 		<parameter name="tropismS" value="0.05"/>
@@ -272,6 +260,6 @@
 		<!--leaf 2d shape define along main axis or radially-->
 		<parameter name="parametrisationType" value="1"/>
 		<!--lead 2d shape-->
-		<parameter name="leafGeometry" phi="-1.57079633,-1.3962634,-0.78539816,0.,0.78539816,1.57079633" x="1., 1., 1., 1., 1."/>
+		<parameter name="leafGeometry" phi="-1.57079633, -1.3962634, -0.78539816, 0., 0.78539816, 1.57079633" x="38.41053981, 1., 1., 0.3, 1., 38.41053981"/>
 </organ>
 </plant>
